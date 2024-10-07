@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Attributes;
 
+use Cake\Attributes\Router\RouteProvider;
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Core\ContainerInterface;
@@ -26,6 +27,7 @@ class AttributesPlugin extends BasePlugin
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
+        // Add your bootstrapping logic here.
     }
 
     /**
@@ -41,13 +43,12 @@ class AttributesPlugin extends BasePlugin
     {
         $routes->plugin(
             'Attributes',
-            ['path' => '/attributes'],
             function (RouteBuilder $builder): void {
-                // Add custom routes here
-
-                $builder->fallbacks();
+                $provider = new RouteProvider();
+                $provider->autoRegister($builder);
             }
         );
+
         parent::routes($routes);
     }
 
