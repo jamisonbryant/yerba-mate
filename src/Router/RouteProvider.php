@@ -17,8 +17,6 @@ use Cake\Routing\Router;
  *
  * @category Utility
  * @package  App\Service\Router
- * @author   Jamison Bryant <jbryant@ticketsauce.com>
- * @license  Proprietary
  */
 class RouteProvider
 {

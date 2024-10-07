@@ -22,8 +22,6 @@ use Cake\Attributes\Attributes\Scope;
  *
  * @category Utility
  * @package  App\Service\Router
- * @author   Jamison Bryant <jbryant@ticketsauce.com>
- * @license  Proprietary
  */
 class RouteScanner
 {

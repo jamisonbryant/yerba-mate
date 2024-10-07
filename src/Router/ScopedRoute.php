@@ -13,8 +13,6 @@ use Cake\Routing\Route\Route;
  *
  * @category Decorator
  * @package  Cake\Attributes\Router
- * @author   Jamison Bryant <jbryant@ticketsauce.com>
- * @license  Proprietary
  */
 class ScopedRoute extends Route
 {
