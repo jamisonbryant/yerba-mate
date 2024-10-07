@@ -14,6 +14,14 @@ class Route implements RouteAttribute
 
     public array $middleware;
 
+    /**
+     * Class constructor.
+     *
+     * @param array|string $methods
+     * @param string $uri
+     * @param mixed $name
+     * @param array|string $middleware
+     */
     public function __construct(
         array|string $methods,
         public string $uri,

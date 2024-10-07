@@ -8,6 +8,16 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 class ApiResource extends Resource
 {
+    /**
+     * Class constructor.
+     *
+     * @param string $resource
+     * @param array|string|null $except
+     * @param array|string|null $only
+     * @param array|string|null $names
+     * @param array|string|null $parameters
+     * @param mixed $shallow
+     */
     public function __construct(
         public string $resource,
         public array|string|null $except = null,

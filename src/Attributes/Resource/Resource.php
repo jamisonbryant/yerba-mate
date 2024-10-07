@@ -9,6 +9,17 @@ use Cake\Attributes\Attributes\RouteAttribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Resource implements RouteAttribute
 {
+    /**
+     * Class constructor.
+     *
+     * @param string $resource
+     * @param bool $apiResource
+     * @param array|string|null $except
+     * @param array|string|null $only
+     * @param array|string|null $names
+     * @param array|string|null $parameters
+     * @param mixed $shallow
+     */
     public function __construct(
         public string $resource,
         public bool $apiResource = false,

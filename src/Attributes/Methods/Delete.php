@@ -10,6 +10,13 @@ use Cake\Attributes\Enums\HttpMethod;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Delete extends Route
 {
+    /**
+     * Class constructor.
+     *
+     * @param string $uri
+     * @param mixed $name
+     * @param array|string $middleware
+     */
     public function __construct(
         string $uri,
         ?string $name = null,

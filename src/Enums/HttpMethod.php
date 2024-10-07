@@ -15,6 +15,9 @@ enum HttpMethod: string
     case OPTIONS = 'OPTIONS';
     case HEAD = 'HEAD';
 
+    /**
+     * @return array
+     */
     public static function verbs(): array
     {
         $reflection = new ReflectionClass(self::class);
