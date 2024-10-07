@@ -7,13 +7,13 @@ namespace Cake\Attributes\Router;
 use Cake\Log\Log;
 use Cake\Routing\Route\Route as CakeRoute;
 use ReflectionClass;
-use TicketSauce\CakephpRouteAttributes\Attributes\Defaults;
-use TicketSauce\CakephpRouteAttributes\Attributes\Domain;
-use TicketSauce\CakephpRouteAttributes\Attributes\Middleware;
-use TicketSauce\CakephpRouteAttributes\Attributes\Pattern\Pattern;
-use TicketSauce\CakephpRouteAttributes\Attributes\Prefix;
-use TicketSauce\CakephpRouteAttributes\Attributes\Route;
-use TicketSauce\CakephpRouteAttributes\Attributes\Scope;
+use Cake\Attributes\Attributes\Defaults;
+use Cake\Attributes\Attributes\Domain;
+use Cake\Attributes\Attributes\Middleware;
+use Cake\Attributes\Attributes\Pattern\Pattern;
+use Cake\Attributes\Attributes\Prefix;
+use Cake\Attributes\Attributes\Route;
+use Cake\Attributes\Attributes\Scope;
 
 /**
  * Route Scanner
