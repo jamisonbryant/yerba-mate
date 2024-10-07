@@ -1,10 +1,10 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Enums;
+namespace Cake\Attributes\Enums;
 
 use ReflectionClass;
 
-enum HttpMethod: string 
+enum HttpMethod: string
 {
     case GET = 'GET';
     case POST = 'POST';
@@ -14,11 +14,11 @@ enum HttpMethod: string
     case OPTIONS = 'OPTIONS';
     case HEAD = 'HEAD';
 
-    public static function verbs(): array 
+    public static function verbs(): array
     {
         $reflection = new ReflectionClass(self::class);
         $cases = $reflection->getConstants();
-        
+
         $verbs = [];
         array_walk($cases, static function($value) use (&$verbs) {
             $verbs[] = $value->value;

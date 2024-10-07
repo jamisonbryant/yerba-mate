@@ -1,6 +1,6 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes\Resource;
+namespace Cake\Attributes\Attributes\Resource;
 
 use Attribute;
 

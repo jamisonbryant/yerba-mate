@@ -1,10 +1,10 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes\Methods;
+namespace Cake\Attributes\Attributes\Methods;
 
 use Attribute;
-use TicketSauce\CakephpRouteAttributes\Attributes\Route;
-use TicketSauce\CakephpRouteAttributes\Enums\HttpMethod;
+use Cake\Attributes\Attributes\Route;
+use Cake\Attributes\Enums\HttpMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Post extends Route

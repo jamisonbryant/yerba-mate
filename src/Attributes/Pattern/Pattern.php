@@ -1,6 +1,6 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes\Pattern;
+namespace Cake\Attributes\Attributes\Pattern;
 
 use Attribute;
 

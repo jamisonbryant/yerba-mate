@@ -1,6 +1,6 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes;
+namespace Cake\Attributes\Attributes;
 
 interface RouteAttribute
 {

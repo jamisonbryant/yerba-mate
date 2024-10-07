@@ -1,10 +1,10 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes;
+namespace Cake\Attributes\Attributes;
 
 use Attribute;
 use Illuminate\Support\Arr;
-use TicketSauce\CakephpRouteAttributes\Enums\HttpMethod;
+use Cake\Attributes\Enums\HttpMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Route implements RouteAttribute

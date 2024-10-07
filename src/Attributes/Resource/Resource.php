@@ -1,9 +1,9 @@
 <?php
 
-namespace TicketSauce\CakephpRouteAttributes\Attributes\Resource;
+namespace Cake\Attributes\Attributes\Resource;
 
 use Attribute;
-use TicketSauce\CakephpRouteAttributes\Attributes\RouteAttribute;
+use Cake\Attributes\Attributes\RouteAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class Resource implements RouteAttribute
