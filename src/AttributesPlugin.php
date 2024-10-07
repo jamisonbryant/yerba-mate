@@ -42,7 +42,7 @@ class AttributesPlugin extends BasePlugin
         $routes->plugin(
             'Attributes',
             ['path' => '/attributes'],
-            function (RouteBuilder $builder) {
+            function (RouteBuilder $builder): void {
                 // Add custom routes here
 
                 $builder->fallbacks();
