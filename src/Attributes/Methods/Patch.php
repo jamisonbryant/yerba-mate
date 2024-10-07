@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Cake\Attributes\Attributes\Methods;
 
@@ -12,7 +13,7 @@ class Patch extends Route
     public function __construct(
         string $uri,
         ?string $name = null,
-        array | string $middleware = [],
+        array|string $middleware = [],
     ) {
         parent::__construct(
             methods: [HttpMethod::PATCH->value],

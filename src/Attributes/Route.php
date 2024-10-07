@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Cake\Attributes\Attributes;
 
 use Attribute;
-use Illuminate\Support\Arr;
 use Cake\Attributes\Enums\HttpMethod;
+use Illuminate\Support\Arr;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Route implements RouteAttribute
@@ -14,10 +15,10 @@ class Route implements RouteAttribute
     public array $middleware;
 
     public function __construct(
-        array | string $methods,
+        array|string $methods,
         public string $uri,
         public ?string $name = null,
-        array | string $middleware = [],
+        array|string $middleware = [],
     ) {
         $this->methods = array_map(function (string $verb) {
             $upperVerb = strtoupper($verb);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Cake\Attributes\Enums;
 
@@ -20,7 +21,7 @@ enum HttpMethod: string
         $cases = $reflection->getConstants();
 
         $verbs = [];
-        array_walk($cases, static function($value) use (&$verbs) {
+        array_walk($cases, static function ($value) use (&$verbs): void {
             $verbs[] = $value->value;
         });
 
