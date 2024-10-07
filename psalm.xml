@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<psalm
+    usePhpDocMethodsWithoutMagicCall="true"
+    findUnusedPsalmSuppress="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    autoloader="tests/bootstrap.php"
+    errorBaseline="psalm-baseline.xml"
+>
+  <projectFiles>
+    <directory name="src" />
+    <ignoreFiles>
+      <directory name="vendor" />
+    </ignoreFiles>
+  </projectFiles>
+
+  <issueHandlers>
+    <PropertyNotSetInConstructor errorLevel="suppress"/>
+  </issueHandlers>
+</psalm>
