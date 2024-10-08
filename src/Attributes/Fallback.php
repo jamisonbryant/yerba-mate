@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes;
+namespace CakeAttributes\Attributes;
 
 use Attribute;
 

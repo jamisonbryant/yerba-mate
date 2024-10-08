@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes;
+namespace CakeAttributes\Attributes;
 
 use Attribute;
-use Illuminate\Support\Arr;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class Middleware implements RouteAttribute
@@ -18,6 +17,6 @@ class Middleware implements RouteAttribute
      */
     public function __construct(string|array $middleware = [])
     {
-        $this->middleware = Arr::wrap($middleware);
+        $this->middleware = is_array($middleware) ? $middleware : [$middleware];
     }
 }

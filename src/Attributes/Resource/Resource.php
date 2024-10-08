@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes\Resource;
+namespace CakeAttributes\Attributes\Resource;
 
 use Attribute;
-use Cake\Attributes\Attributes\RouteAttribute;
+use CakeAttributes\Attributes\RouteAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class Resource implements RouteAttribute
@@ -18,7 +18,7 @@ class Resource implements RouteAttribute
      * @param array|string|null $only
      * @param array|string|null $names
      * @param array|string|null $parameters
-     * @param mixed $shallow
+     * @param bool|null $shallow
      */
     public function __construct(
         public string $resource,

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Router;
+namespace CakeAttributes\Router;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -20,12 +20,12 @@ use Cake\Routing\Router;
 class RouteProvider
 {
     /**
-     * @var array<\Cake\Attributes\Router\ScopedRoute>
+     * @var array<\CakeAttributes\Router\ScopedRoute>
      */
     protected array $routes = [];
 
     /**
-     * @var \Cake\Attributes\Router\RouteScanner
+     * @var \CakeAttributes\Router\RouteScanner
      */
     protected RouteScanner $routeScanner;
 
@@ -37,14 +37,14 @@ class RouteProvider
      */
     public function __construct(
         protected readonly string $cacheKey = 'attribute_routes',
-        protected readonly string $cacheConfig = '_cake_routes_'
+        protected readonly string $cacheConfig = '_cake_attributes_'
     ) {
         // noop
     }
 
     /**
      * @param class-string $controller
-     * @return array<\Cake\Attributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Router\ScopedRoute>
      */
     public function buildRoutes(string $controller): array
     {
@@ -66,7 +66,7 @@ class RouteProvider
      *
      * @param \Cake\Routing\Route\Route $route
      * @param string $scope
-     * @return array<\Cake\Attributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Router\ScopedRoute>
      */
     public function addRoute(CakeRoute $route, string $scope = '/'): array
     {
@@ -80,7 +80,7 @@ class RouteProvider
      *
      * @param array<class-string> $controllers
      * @param bool $clearCache If true, cache will be cleared prior to returning routes
-     * @return array<\Cake\Attributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Router\ScopedRoute>
      */
     public function getRoutes(array $controllers, bool $clearCache = false): array
     {

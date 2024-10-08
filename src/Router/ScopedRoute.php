@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Router;
+namespace CakeAttributes\Router;
 
 use Cake\Routing\Route\Route;
 
@@ -11,7 +11,7 @@ use Cake\Routing\Route\Route;
  * Decorator class for attaching scope information to a route
  *
  * @category Decorator
- * @package  Cake\Attributes\Router
+ * @package  CakeAttributes\Router
  */
 class ScopedRoute extends Route
 {

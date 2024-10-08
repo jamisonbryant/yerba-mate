@@ -26,7 +26,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="dumpsql">
+        <testsuite name="attributes">
             <directory>./tests/TestCase/</directory>
         </testsuite>
     </testsuites>

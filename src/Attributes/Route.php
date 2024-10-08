@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes;
+namespace CakeAttributes\Attributes;
 
 use Attribute;
-use Cake\Attributes\Enums\HttpMethod;
-use Illuminate\Support\Arr;
+use CakeAttributes\Enums\HttpMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Route implements RouteAttribute
@@ -19,7 +18,7 @@ class Route implements RouteAttribute
      *
      * @param array|string $methods
      * @param string $uri
-     * @param mixed $name
+     * @param string|null $name
      * @param array|string $middleware
      */
     public function __construct(
@@ -28,6 +27,8 @@ class Route implements RouteAttribute
         public ?string $name = null,
         array|string $middleware = [],
     ) {
+        $methods = is_array($methods) ? $methods : [$methods];
+        $middlewares = is_array($middleware) ? $middleware : [$middleware];
         $this->methods = array_map(function (string $verb) {
             $upperVerb = strtoupper($verb);
             if (in_array($upperVerb, HttpMethod::verbs())) {
@@ -35,8 +36,8 @@ class Route implements RouteAttribute
             } else {
                 return $verb;
             }
-        }, Arr::wrap($methods));
+        }, $methods);
 
-        $this->middleware = Arr::wrap($middleware);
+        $this->middleware = $middlewares;
     }
 }
