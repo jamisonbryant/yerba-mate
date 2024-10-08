@@ -88,7 +88,7 @@ class RouteProviderTest extends TestCase
             ->map(fn ($route) => $route->getName())
             ->toArray();
 
-        $this->assertTrue(in_array('attributes.users:authenticate', $routeNames));
+        $this->assertTrue(in_array('users:authenticate', $routeNames));
 //        $this->assertTrue(in_array('partners:search', $routeNames));
 //        $this->assertTrue(in_array('organizations:search', $routeNames));
 //        $this->assertTrue(in_array('events:search', $routeNames));
@@ -104,7 +104,7 @@ class RouteProviderTest extends TestCase
             ->map(fn ($route) => $route->getName())
             ->toArray();
 
-        $this->assertTrue(in_array('attributes._controller:_action', $routeNames));
+        $this->assertTrue(in_array('_controller:_action', $routeNames));
     }
 
     public function testAutoRegisterDoesNotRegisterFallbackRoutesWhenAllowFallbacksIsFalse(): void

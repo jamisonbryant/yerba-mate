@@ -36,13 +36,8 @@ class CakeAttributesPlugin extends BasePlugin
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->plugin(
-            'Attributes',
-            function (RouteBuilder $builder): void {
-                $provider = new RouteProvider();
-                $provider->autoRegister($builder);
-            }
-        );
+        $provider = new RouteProvider();
+        $provider->autoRegister($routes);
 
         parent::routes($routes);
     }
