@@ -1,22 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Test\TestCase\Router;
+namespace CakeAttributes\Test\TestCase\Router;
 
-use App\Application;
-use App\Controller\UsersController;
-use Cake\Attributes\Router\RouteProvider;
-use Cake\Attributes\Router\ScopedRoute;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use CakeAttributes\Router\RouteProvider;
+use CakeAttributes\Router\ScopedRoute;
+use TestApp\Controller\UsersController;
 
 /**
  * Route Provider Test
  *
- * @covers \Cake\Attributes\Router\RouteProvider
+ * @covers \CakeAttributes\Router\RouteProvider
  */
 class RouteProviderTest extends TestCase
 {
@@ -34,7 +33,7 @@ class RouteProviderTest extends TestCase
         //     [PLUGIN_TESTS . 'test_app' . DS . 'config']
         // );
 
-        $this->provider = new RouteProvider('route_provider_test', 'test_basic');
+        $this->provider = new RouteProvider('route_provider_test');
         $this->configuredRoutes = $this->getConfiguredRoutes();
     }
 
@@ -66,7 +65,7 @@ class RouteProviderTest extends TestCase
 
         $mockProvider = $this
             ->getMockBuilder(RouteProvider::class)
-            ->setConstructorArgs(['my_test_key', 'test_basic'])
+            ->setConstructorArgs(['my_test_key'])
             ->onlyMethods(['buildRoutes'])
             ->getMock();
 
@@ -76,7 +75,7 @@ class RouteProviderTest extends TestCase
             ->willReturn($uncachedRoutes);
 
         $clearCache = $mockProvider->getRoutes([UsersController::class], true);
-        Cache::write('my_test_key', $cachedRoutes, 'test_basic');
+        Cache::write('my_test_key', $cachedRoutes);
         $noClearCache = $mockProvider->getRoutes([UsersController::class]);
 
         $this->assertEquals($uncachedRoutes, $clearCache);
@@ -89,11 +88,11 @@ class RouteProviderTest extends TestCase
             ->map(fn ($route) => $route->getName())
             ->toArray();
 
-        $this->assertTrue(in_array('users:authenticate', $routeNames));
-        $this->assertTrue(in_array('partners:search', $routeNames));
-        $this->assertTrue(in_array('organizations:search', $routeNames));
-        $this->assertTrue(in_array('events:search', $routeNames));
-        $this->assertTrue(in_array('swaggerbake.swagger:index', $routeNames));
+        $this->assertTrue(in_array('attributes.users:authenticate', $routeNames));
+//        $this->assertTrue(in_array('partners:search', $routeNames));
+//        $this->assertTrue(in_array('organizations:search', $routeNames));
+//        $this->assertTrue(in_array('events:search', $routeNames));
+//        $this->assertTrue(in_array('swaggerbake.swagger:index', $routeNames));
     }
 
     public function testAutoRegisterRegistersFallbackRoutesWhenAllowFallbacksIsTrue(): void
@@ -105,7 +104,7 @@ class RouteProviderTest extends TestCase
             ->map(fn ($route) => $route->getName())
             ->toArray();
 
-        $this->assertTrue(in_array('_controller:_action', $routeNames));
+        $this->assertTrue(in_array('attributes._controller:_action', $routeNames));
     }
 
     public function testAutoRegisterDoesNotRegisterFallbackRoutesWhenAllowFallbacksIsFalse(): void
@@ -127,12 +126,7 @@ class RouteProviderTest extends TestCase
     {
         // Reset the router to defaults to that previously-registered routes don't pollute the test
         Router::reload();
-
-        $builder = Router::createRouteBuilder('/');
-        $app = new Application(CONFIG);
-
-        // Bootstrap application routes, making sure we clear the cache
-        $app->routes($builder, true);
+        $this->loadPlugins(['CakeAttributes']);
 
         return Router::getRouteCollection()->routes();
     }

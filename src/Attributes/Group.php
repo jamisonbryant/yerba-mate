@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes;
+namespace CakeAttributes\Attributes;
 
 use Attribute;
 
@@ -9,12 +9,10 @@ use Attribute;
 class Group implements RouteAttribute
 {
     /**
-     * Class constructor.
-     *
-     * @param mixed $prefix
-     * @param mixed $domain
-     * @param mixed $as
-     * @param mixed $where
+     * @param string|null $prefix
+     * @param string|null $domain
+     * @param string|null $as
+     * @param array|null $where
      */
     public function __construct(
         public ?string $prefix = null,

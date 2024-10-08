@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Attributes\Methods;
+namespace CakeAttributes\Attributes\Methods;
 
 use Attribute;
-use Cake\Attributes\Attributes\Route;
-use Cake\Attributes\Enums\HttpMethod;
+use CakeAttributes\Attributes\Route;
+use CakeAttributes\Enums\HttpMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class Options extends Route
@@ -14,7 +14,7 @@ class Options extends Route
      * Class constructor.
      *
      * @param string $uri
-     * @param mixed $name
+     * @param string|null $name
      * @param array|string $middleware
      */
     public function __construct(

@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Router;
+namespace CakeAttributes\Router;
 
-use Cake\Attributes\Attributes\Defaults;
-use Cake\Attributes\Attributes\Domain;
-use Cake\Attributes\Attributes\Middleware;
-use Cake\Attributes\Attributes\Pattern\Pattern;
-use Cake\Attributes\Attributes\Prefix;
-use Cake\Attributes\Attributes\Route;
-use Cake\Attributes\Attributes\Scope;
 use Cake\Log\Log;
 use Cake\Routing\Route\Route as CakeRoute;
+use CakeAttributes\Attributes\Defaults;
+use CakeAttributes\Attributes\Domain;
+use CakeAttributes\Attributes\Middleware;
+use CakeAttributes\Attributes\Pattern\Pattern;
+use CakeAttributes\Attributes\Prefix;
+use CakeAttributes\Attributes\Route;
+use CakeAttributes\Attributes\Scope;
 use ReflectionClass;
 use ReflectionException;
 
@@ -63,7 +63,7 @@ class RouteScanner
             }
         }
 
-        /** @var array<\Cake\Attributes\Attributes\Scope> $scopeAttribute */
+        /** @var array<\CakeAttributes\Attributes\Scope> $scopeAttribute */
         $scopeAttribute = array_filter($this->classAttributes, fn ($attrib) => $attrib instanceof Scope);
         if ($scopeAttribute) {
             $scopeAttribute = array_shift($scopeAttribute);
@@ -91,7 +91,7 @@ class RouteScanner
             }
         }
 
-        /** @var array<\Cake\Attributes\Attributes\Prefix> $prefixAttribute */
+        /** @var array<\CakeAttributes\Attributes\Prefix> $prefixAttribute */
         $prefixAttribute = array_filter($this->classAttributes, fn ($attrib) => $attrib instanceof Prefix);
         if ($prefixAttribute) {
             $prefixAttribute = array_shift($prefixAttribute);
@@ -124,7 +124,7 @@ class RouteScanner
             $defaults['action'] = $methodName;
             $patterns = $pass = [];
 
-            $routeAttribute = array_filter($attributes, fn ($attrib) => $attrib instanceof Route);
+            $routeAttribute = array_filter($attributes, fn (mixed $attrib) => $attrib instanceof Route);
             if (!$routeAttribute) {
                 // There are no route attributes on this method, so skip it
                 continue;
@@ -136,8 +136,8 @@ class RouteScanner
                 $options['_name'] = $routeAttribute->name;
             }
 
-            /** @var array<\Cake\Attributes\Attributes\Pattern\Pattern> $patternAttributes */
-            $patternAttributes = array_filter($attributes, fn ($attrib) => $attrib instanceof Pattern);
+            /** @var array<\CakeAttributes\Attributes\Pattern\Pattern> $patternAttributes */
+            $patternAttributes = array_filter($attributes, fn (mixed $attrib) => $attrib instanceof Pattern);
             foreach ($patternAttributes as $pattern) {
                 $patterns[$pattern->param] = $pattern->constraint;
 
@@ -145,7 +145,7 @@ class RouteScanner
                 $pass[] = $pattern->param;
             }
 
-            $defaultAttributes = array_filter($attributes, fn ($attrib) => $attrib instanceof Defaults);
+            $defaultAttributes = array_filter($attributes, fn (mixed $attrib) => $attrib instanceof Defaults);
             foreach ($defaultAttributes as $default) {
                 $defaults[$default->key] = $default->value;
             }
@@ -155,15 +155,15 @@ class RouteScanner
                 ->setPatterns($patterns)
                 ->setPass($pass);
 
-            /** @var array<\Cake\Attributes\Attributes\Domain> $domainAttributes */
-            $domainAttributes = array_filter($attributes, fn ($attrib) => $attrib instanceof Domain);
+            /** @var array<\CakeAttributes\Attributes\Domain> $domainAttributes */
+            $domainAttributes = array_filter($attributes, fn (mixed $attrib) => $attrib instanceof Domain);
             if ($domainAttributes) {
                 $host = array_shift($domainAttributes)->domain;
                 $route = $route->setHost($host);
             }
 
-            /** @var array<\Cake\Attributes\Attributes\Middleware> $middlewareAttributes */
-            $middlewareAttributes = array_filter($attributes, fn ($attrib) => $attrib instanceof Middleware);
+            /** @var array<\CakeAttributes\Attributes\Middleware> $middlewareAttributes */
+            $middlewareAttributes = array_filter($attributes, fn (mixed $attrib) => $attrib instanceof Middleware);
             if ($middlewareAttributes) {
                 $middleware = array_shift($middlewareAttributes)->middleware;
                 $route = $route->setMiddleware($middleware);

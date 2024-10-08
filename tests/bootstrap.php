@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\FileEngine;
+use Cake\Core\Configure;
+use TestApp\Controller\UsersController;
+
 $findRoot = function ($root) {
     do {
         $lastRoot = $root;
@@ -15,6 +20,24 @@ $root = $findRoot(__FILE__);
 unset($findRoot);
 chdir($root);
 require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
+
+Configure::write('Routing.controllers', [
+    UsersController::class,
+]);
+Configure::write('Routing.autoRegister', true);
+
+Cache::setConfig([
+    'default' => [
+        'engine' => FileEngine::class,
+        'path' => CACHE,
+    ],
+    '_cake_attributes_' => [
+        'engine' => FileEngine::class,
+        'path' => CACHE,
+    ],
+]);
+
+require CAKE . 'functions.php';
 
 // See setUp() method inside tests
 define('PLUGIN_TESTS', $root . DS . 'tests' . DS);

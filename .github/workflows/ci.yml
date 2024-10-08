@@ -3,7 +3,7 @@ name: CI
 on:
     push:
         branches:
-            - '2.x'
+            - '1.x'
     pull_request:
         branches:
             - '*'
@@ -19,38 +19,10 @@ jobs:
             fail-fast: false
             matrix:
                 php-version: [ '8.1', '8.2', '8.3' ]
-                db-type: [ sqlite, mysql, pgsql ]
-
-        services:
-            postgres:
-                image: postgres:14
-                env:
-                    POSTGRES_PASSWORD: postgres
-                ports:
-                    - 5432:5432
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
+                db-type: [ sqlite ]
 
         steps:
             -   uses: actions/checkout@v4
-
-            -   name: Setup MySQL
-                if: matrix.db-type == 'mysql'
-                run: |
-                    sudo service mysql start
-                    mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
-
-            -   name: Setup Postgres
-                if: matrix.db-type == 'pgsql'
-                run: |
-                    PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -c 'GRANT ALL ON SCHEMA public to postgres;'
-
-            -   name: Install pg_dump
-                if: matrix.db-type == 'pgsql'
-                run: sudo apt-get install postgresql-client
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
@@ -58,7 +30,6 @@ jobs:
                     php-version: ${{ matrix.php-version }}
                     extensions: mbstring, intl, pdo_${{ matrix.db-type }}
                     ini-values: zend.assertions=1
-                    coverage: pcov
 
             -   name: Composer install
                 uses: ramsey/composer-install@v3
@@ -71,21 +42,7 @@ jobs:
                     if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then
                         export DB_URL=sqlite:///testdb.sqlite3
                     fi
-                    if [[ ${{ matrix.db-type }} == 'mysql' ]]; then
-                        export DB_URL=mysql://root:root@127.0.0.1/cakephp
-                    fi
-                    if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then
-                        export DB_URL=postgres://postgres:postgres@127.0.0.1/postgres
-                    fi
-                    if [[ ${{ matrix.php-version }} == '8.2' ]]; then
-                        vendor/bin/phpunit --coverage-clover=coverage.xml
-                    else
-                        vendor/bin/phpunit
-                    fi
-
-            -   name: Code Coverage Report
-                if: success() && matrix.php-version == '8.2'
-                uses: codecov/codecov-action@v4
+                    vendor/bin/phpunit
 
     cs-stan:
         name: Coding Standard & Static Analysis

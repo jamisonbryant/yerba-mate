@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Cake\Attributes\Test\TestCase\Router;
+namespace CakeAttributes\Test\TestCase\Router;
 
-use Cake\Attributes\Attributes\Prefix;
-use Cake\Attributes\Attributes\Scope;
-use Cake\Attributes\Router\RouteScanner;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use CakeAttributes\Attributes\Prefix;
+use CakeAttributes\Attributes\Scope;
+use CakeAttributes\Router\RouteScanner;
 use ReflectionClass;
 
 /**
  * Route Scanner Test
  *
- * @covers \Cake\Attributes\Router\RouteScanner
+ * @covers \CakeAttributes\Router\RouteScanner
  */
 class RouteScannerTest extends TestCase
 {

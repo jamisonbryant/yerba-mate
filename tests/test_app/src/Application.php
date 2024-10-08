@@ -12,7 +12,7 @@ class Application extends BaseApplication
 {
     public function bootstrap(): void
     {
-        $this->addPlugin('Attributes');
+        $this->addPlugin('CakeAttributes');
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
