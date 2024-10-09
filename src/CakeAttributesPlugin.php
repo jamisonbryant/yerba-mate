@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace CakeAttributes;
 
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\FileEngine;
 use Cake\Core\BasePlugin;
-use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
-use CakeAttributes\Router\RouteProvider;
+use CakeAttributes\Routing\RouteProvider;
 
 /**
  * Plugin for Attributes
@@ -20,8 +21,12 @@ class CakeAttributesPlugin extends BasePlugin
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
-        if (!Configure::check('Cache._cake_attributes_')) {
-            // do something?
+        // Set a default config if it does not exist
+        if (Cache::getConfig('cake_attributes') === null) {
+            Cache::setConfig('cake_attributes', [
+                'engine' => FileEngine::class,
+                'path' => CACHE,
+            ]);
         }
     }
 

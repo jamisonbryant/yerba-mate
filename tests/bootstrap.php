@@ -26,14 +26,16 @@ Configure::write('Routing.controllers', [
 ]);
 Configure::write('Routing.autoRegister', true);
 
+define('MYTMP', __DIR__ . DS . '..' . DS . 'tmp' . DS);
+
 Cache::setConfig([
     'default' => [
         'engine' => FileEngine::class,
-        'path' => CACHE,
+        'path' => MYTMP,
     ],
-    '_cake_attributes_' => [
+    'cake_attributes' => [
         'engine' => FileEngine::class,
-        'path' => CACHE,
+        'path' => MYTMP,
     ],
 ]);
 

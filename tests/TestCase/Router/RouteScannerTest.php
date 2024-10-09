@@ -7,13 +7,13 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use CakeAttributes\Attributes\Prefix;
 use CakeAttributes\Attributes\Scope;
-use CakeAttributes\Router\RouteScanner;
+use CakeAttributes\Routing\RouteScanner;
 use ReflectionClass;
 
 /**
  * Route Scanner Test
  *
- * @covers \CakeAttributes\Router\RouteScanner
+ * @covers \CakeAttributes\Routing\RouteScanner
  */
 class RouteScannerTest extends TestCase
 {

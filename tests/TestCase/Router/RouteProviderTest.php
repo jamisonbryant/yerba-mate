@@ -3,19 +3,18 @@ declare(strict_types=1);
 
 namespace CakeAttributes\Test\TestCase\Router;
 
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use CakeAttributes\Router\RouteProvider;
-use CakeAttributes\Router\ScopedRoute;
+use CakeAttributes\Routing\Route\ScopedRoute;
+use CakeAttributes\Routing\RouteProvider;
 use TestApp\Controller\UsersController;
 
 /**
  * Route Provider Test
  *
- * @covers \CakeAttributes\Router\RouteProvider
+ * @covers \CakeAttributes\Routing\RouteProvider
  */
 class RouteProviderTest extends TestCase
 {
@@ -26,19 +25,15 @@ class RouteProviderTest extends TestCase
     {
         parent::setUp();
 
-        // Sets the TestApp namespace to be used instead of App
         $this->setAppNamespace();
-        // $this->configApplication(
-        //     'TestApp\Application',
-        //     [PLUGIN_TESTS . 'test_app' . DS . 'config']
-        // );
-
         $this->provider = new RouteProvider('route_provider_test');
+        $this->provider->clearCache();
         $this->configuredRoutes = $this->getConfiguredRoutes();
     }
 
     protected function tearDown(): void
     {
+        $this->provider->clearCache();
         unset($this->provider);
         unset($this->configuredRoutes);
 
@@ -47,57 +42,46 @@ class RouteProviderTest extends TestCase
 
     public function testAddRouteUpdatesRoutesArray(): void
     {
-        $mockRoute = $this->getMockBuilder(CakeRoute::class)
-            ->setConstructorArgs(['/test'])
-            ->getMock();
-
-        $routes = $this->provider->addRoute($mockRoute, '/test_scope');
-
+        $cakeRoute = new CakeRoute('/test');
+        $routes = $this->provider->addRoute($cakeRoute, '/test_scope');
         $routeUris = array_map(fn (ScopedRoute $route) => $route->getUri(), $routes);
-
         $this->assertContains('/test_scope/test', $routeUris);
     }
 
     public function testGetRoutesRespectsCacheSetting(): void
     {
-        $uncachedRoutes = ['route_1', 'route_2'];
-        $cachedRoutes = ['cached_route_1', 'cached_route_2'];
+        $firstRun = $this->provider->getRoutes([UsersController::class]);
+        $secondRun = $this->provider->getRoutes([UsersController::class]);
 
-        $mockProvider = $this
-            ->getMockBuilder(RouteProvider::class)
-            ->setConstructorArgs(['my_test_key'])
-            ->onlyMethods(['buildRoutes'])
-            ->getMock();
-
-        $mockProvider
-            ->expects($this->exactly(1))
-            ->method('buildRoutes')
-            ->willReturn($uncachedRoutes);
-
-        $clearCache = $mockProvider->getRoutes([UsersController::class], true);
-        Cache::write('my_test_key', $cachedRoutes);
-        $noClearCache = $mockProvider->getRoutes([UsersController::class]);
-
-        $this->assertEquals($uncachedRoutes, $clearCache);
-        $this->assertEquals($cachedRoutes, $noClearCache);
+        $this->assertEquals($firstRun, $secondRun);
     }
 
     public function testAutoRegisterRegistersCriticalRoutes(): void
     {
-        $routeNames = collection($this->configuredRoutes)
-            ->map(fn ($route) => $route->getName())
+        $routeDefinitions = collection($this->configuredRoutes)
+            ->map(fn (ScopedRoute $route) => $route->getDefinition())
             ->toArray();
 
-        $this->assertTrue(in_array('users:authenticate', $routeNames));
-//        $this->assertTrue(in_array('partners:search', $routeNames));
-//        $this->assertTrue(in_array('organizations:search', $routeNames));
-//        $this->assertTrue(in_array('events:search', $routeNames));
-//        $this->assertTrue(in_array('swaggerbake.swagger:index', $routeNames));
+        $expected = [
+            'users:edit | //users/edit/:id | GET',
+            'users:edit | //users/edit/:id | GET',
+            'users:delete | //users/delete/:id | POST',
+            'users:delete | //users/delete/:id | POST',
+            'users:add | //users/add | POST',
+            'users:add | //users/add | POST',
+            'users:view | //users/:id | GET',
+            'users:view | //users/:id | GET',
+            'users:index | //users | GET',
+            'users:index | //users | GET',
+        ];
+
+        $this->assertEquals($expected, $routeDefinitions);
     }
 
     public function testAutoRegisterRegistersFallbackRoutesWhenAllowFallbacksIsTrue(): void
     {
         Configure::write('Routing.allowFallbacks', true);
+        $this->provider->clearCache();
         $routes = $this->getConfiguredRoutes();
 
         $routeNames = collection($routes)
@@ -127,6 +111,8 @@ class RouteProviderTest extends TestCase
         // Reset the router to defaults to that previously-registered routes don't pollute the test
         Router::reload();
         $this->loadPlugins(['CakeAttributes']);
+        $builder = Router::createRouteBuilder('/');
+        $this->provider->autoRegister($builder);
 
         return Router::getRouteCollection()->routes();
     }
