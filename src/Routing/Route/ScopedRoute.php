@@ -1,17 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace CakeAttributes\Router;
+namespace CakeAttributes\Routing\Route;
+namespace CakeAttributes\Routing\Route;
 
 use Cake\Routing\Route\Route;
 
 /**
- * Scoped Route
- *
  * Decorator class for attaching scope information to a route
- *
- * @category Decorator
- * @package  CakeAttributes\Router
  */
 class ScopedRoute extends Route
 {
@@ -20,7 +16,8 @@ class ScopedRoute extends Route
      */
     public function __construct(private readonly Route $route, protected string $scope)
     {
-        parent::__construct($route->template, $route->defaults, $route->options);
+        $options = $route->options + ['routeClass' => self::class];
+        parent::__construct($route->template, $route->defaults, $options);
     }
 
     /**
@@ -29,6 +26,14 @@ class ScopedRoute extends Route
     public function getUri(): string
     {
         return $this->scope . $this->route->template;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefinition(): string
+    {
+        return sprintf('%s | %s | %s', $this->getName(), $this->getUri(), implode(',', $this->defaults['_method']));
     }
 
     /**

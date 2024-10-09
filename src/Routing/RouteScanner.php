@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CakeAttributes\Router;
+namespace CakeAttributes\Routing;
 
 use Cake\Log\Log;
 use Cake\Routing\Route\Route as CakeRoute;
@@ -16,12 +16,7 @@ use ReflectionClass;
 use ReflectionException;
 
 /**
- * Route Scanner
- *
  * Scans controllers for methods with the Route attribute and return an array of Route objects.
- *
- * @category Utility
- * @package  App\Service\Router
  */
 class RouteScanner
 {

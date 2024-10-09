@@ -1,33 +1,36 @@
 <?php
 declare(strict_types=1);
 
-namespace CakeAttributes\Router;
+namespace CakeAttributes\Routing;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
+use CakeAttributes\Routing\Route\ScopedRoute;
 
 /**
- * Route Provider
- *
  * Scans controllers and returns route configuration objects for adding to the route table.
- *
- * @category Utility
- * @package  App\Service\Router
  */
 class RouteProvider
 {
     /**
-     * @var array<\CakeAttributes\Router\ScopedRoute>
+     * @var array<\CakeAttributes\Routing\Route\ScopedRoute>
      */
     protected array $routes = [];
 
     /**
-     * @var \CakeAttributes\Router\RouteScanner
+     * @var \CakeAttributes\Routing\RouteScanner
      */
     protected RouteScanner $routeScanner;
+
+    /**
+     * Whether the routes have been cached
+     *
+     * @var bool
+     */
+    protected bool $isCached = false;
 
     /**
      * Class constructor.
@@ -37,19 +40,18 @@ class RouteProvider
      */
     public function __construct(
         protected readonly string $cacheKey = 'attribute_routes',
-        protected readonly string $cacheConfig = '_cake_attributes_'
+        protected readonly string $cacheConfig = 'cake_attributes'
     ) {
         // noop
     }
 
     /**
      * @param class-string $controller
-     * @return array<\CakeAttributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Routing\Route\ScopedRoute>
      */
     public function buildRoutes(string $controller): array
     {
         $this->routeScanner = new RouteScanner($controller);
-        $this->routes = [];
 
         $scope = $this->routeScanner->getScope();
         $routes = $this->routeScanner->getRoutes();
@@ -66,7 +68,7 @@ class RouteProvider
      *
      * @param \Cake\Routing\Route\Route $route
      * @param string $scope
-     * @return array<\CakeAttributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Routing\Route\ScopedRoute>
      */
     public function addRoute(CakeRoute $route, string $scope = '/'): array
     {
@@ -79,33 +81,42 @@ class RouteProvider
      * Returns the routes array, checking cache first
      *
      * @param array<class-string> $controllers
-     * @param bool $clearCache If true, cache will be cleared prior to returning routes
-     * @return array<\CakeAttributes\Router\ScopedRoute>
+     * @return array<\CakeAttributes\Routing\Route\ScopedRoute>
      */
-    public function getRoutes(array $controllers, bool $clearCache = false): array
+    public function getRoutes(array $controllers): array
     {
-        if ($clearCache === true) {
-            Cache::delete($this->cacheKey, $this->cacheConfig);
+        $cachedRoutes = Cache::read($this->cacheKey, $this->cacheConfig);
+        if ($cachedRoutes) {
+            $this->isCached = true;
+            $this->routes = $cachedRoutes;
+
+            return $cachedRoutes;
         }
 
-        return Cache::remember($this->cacheKey, function () use ($controllers) {
-            $routes = [];
-            foreach ($controllers as $controller) {
-                array_push($routes, ...$this->buildRoutes($controller));
-            }
+        $routes = [];
+        foreach ($controllers as $controller) {
+            array_push($routes, ...$this->buildRoutes($controller));
+        }
 
-            return $routes;
-        }, $this->cacheConfig);
+        return $routes;
+    }
+
+    /**
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        $this->isCached = false;
+        Cache::delete($this->cacheKey, $this->cacheConfig);
     }
 
     /**
      * Automatically registers identified routes based on reflected attributes
      *
      * @param \Cake\Routing\RouteBuilder $builder
-     * @param bool $clearCache
      * @return void
      */
-    public function autoRegister(RouteBuilder $builder, bool $clearCache = false): void
+    public function autoRegister(RouteBuilder $builder): void
     {
         if (Configure::read('Routing.autoRegister') === false) {
             return;
@@ -116,21 +127,31 @@ class RouteProvider
             return;
         }
 
-        $routes = collection($this->getRoutes($controllers, $clearCache));
-        if ($routes->count() == 0) {
+        $routes = collection($this->getRoutes($controllers));
+        if ($routes->isEmpty()) {
             return;
         }
+
+        if ($this->isCached) {
+            foreach ($routes as $route) {
+                Router::getRouteCollection()->add($route);
+            }
+
+            return;
+        }
+
+        $toBeCachedRoutes = [];
 
         // Send the routes to the route builder grouped by scope for efficiency
         //   (this is the last thing we do before CakePHP takes over)
         $routes
             ->groupBy(fn (ScopedRoute $route) => $route->getScope())
-            ->each(function (array $scopedRoutes, string $scope) use ($builder): void {
+            ->each(function (array $scopedRoutes, string $scope) use ($builder, &$toBeCachedRoutes): void {
                 $scope = Router::normalize("/$scope/");
-                $builder->scope($scope, function (RouteBuilder $routes) use ($scopedRoutes): void {
+                $builder->scope($scope, function (RouteBuilder $routes) use ($scopedRoutes, &$toBeCachedRoutes): void {
                     foreach ($scopedRoutes as $route) {
-                        $routes->connect(
-                            Router::normalize("/{$route->template}/"),
+                        $toBeCachedRoutes[] = $routes->connect(
+                            $route,
                             $route->defaults,
                             $route->options
                         );
@@ -140,5 +161,9 @@ class RouteProvider
                     }
                 });
             });
+
+        /** @var array<\CakeAttributes\Routing\Route\ScopedRoute> $toBeCachedRoutes */
+        $this->routes = $toBeCachedRoutes;
+        Cache::write($this->cacheKey, $toBeCachedRoutes, $this->cacheConfig);
     }
 }
