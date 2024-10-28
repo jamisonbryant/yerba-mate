@@ -21,9 +21,6 @@ unset($findRoot);
 chdir($root);
 require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
-Configure::write('Routing.controllers', [
-    UsersController::class,
-]);
 Configure::write('Routing.autoRegister', true);
 
 define('MYTMP', __DIR__ . DS . '..' . DS . 'tmp' . DS);
