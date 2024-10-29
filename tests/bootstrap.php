@@ -4,7 +4,6 @@ declare(strict_types=1);
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Core\Configure;
-use TestApp\Controller\UsersController;
 
 $findRoot = function ($root) {
     do {
@@ -16,6 +15,7 @@ $findRoot = function ($root) {
     } while ($root !== $lastRoot);
     throw new Exception('Cannot find the root of the application, unable to run tests');
 };
+
 $root = $findRoot(__FILE__);
 unset($findRoot);
 chdir($root);

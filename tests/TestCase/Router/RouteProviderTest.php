@@ -6,6 +6,7 @@ namespace CakeAttributes\Test\TestCase\Router;
 use Cake\Core\Configure;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\Router;
+use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\TestSuite\TestCase;
 use CakeAttributes\Routing\Route\ScopedRoute;
 use CakeAttributes\Routing\RouteProvider;
@@ -18,6 +19,8 @@ use TestApp\Controller\UsersController;
  */
 class RouteProviderTest extends TestCase
 {
+    use ContainerStubTrait;
+
     protected RouteProvider $provider;
     protected array $configuredRoutes;
 
@@ -26,6 +29,11 @@ class RouteProviderTest extends TestCase
         parent::setUp();
 
         $this->setAppNamespace();
+        $this->configApplication(
+            'TestApp\Application',
+            [PLUGIN_TESTS . 'test_app' . DS . 'config']
+        );
+
         $this->provider = new RouteProvider('route_provider_test');
         $this->provider->clearCache();
         $this->configuredRoutes = $this->getConfiguredRoutes();
@@ -56,7 +64,7 @@ class RouteProviderTest extends TestCase
         $this->assertEquals($firstRun, $secondRun);
     }
 
-    public function testAutoRegisterRegistersCriticalRoutes(): void
+    public function testAutoRegisterScansApplicationControllersForRoutes(): void
     {
         $routeDefinitions = collection($this->configuredRoutes)
             ->map(fn (ScopedRoute $route) => $route->getDefinition())
@@ -76,6 +84,11 @@ class RouteProviderTest extends TestCase
         ];
 
         $this->assertEquals($expected, $routeDefinitions);
+    }
+
+    public function testAutoRegisterScansPluginControllersForRoutes(): void
+    {
+
     }
 
     public function testAutoRegisterRegistersFallbackRoutesWhenAllowFallbacksIsTrue(): void
