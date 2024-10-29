@@ -5,9 +5,11 @@ namespace CakeAttributes\Routing;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
+use Cake\Utility\Filesystem;
 use CakeAttributes\Routing\Route\ScopedRoute;
 
 /**
@@ -122,10 +124,29 @@ class RouteProvider
             return;
         }
 
-        $controllers = Configure::read('Routing.controllers');
-        if (!$controllers) {
-            return;
+        $controllers = Configure::read('Routing.controllers', []);
+        if (empty($controllers)) {
+            $appControllers = $this->listControllers(
+                APP . 'Controller',
+                'App\\Controller\\'
+            );
+
+            $pluginControllers = [];
+            foreach (Plugin::loaded() as $pluginName) {
+                $pluginPath = Plugin::path($pluginName) . 'src/Controller';
+                if (is_dir($pluginPath)) {
+                    $pluginNamespace = $pluginName . '\\Controller\\';
+                    $pluginControllers = array_merge(
+                        $pluginControllers,
+                        $this->listControllers($pluginPath, $pluginNamespace)
+                    );
+                }
+            }
+
+            $controllers = array_merge($appControllers, $pluginControllers);
         }
+
+        dd($controllers);
 
         $routes = collection($this->getRoutes($controllers));
         if ($routes->isEmpty()) {
@@ -165,5 +186,33 @@ class RouteProvider
         /** @var array<\CakeAttributes\Routing\Route\ScopedRoute> $toBeCachedRoutes */
         $this->routes = $toBeCachedRoutes;
         Cache::write($this->cacheKey, $toBeCachedRoutes, $this->cacheConfig);
+    }
+
+    /**
+     * Scans a given base path for controllers and returns a list of fully-qualified class names
+     *
+     * @param string $basePath
+     * @param string $namespace
+
+     * @return array
+     */
+    protected function listControllers(string $basePath, string $namespace): array
+    {
+        $controllers = [];
+        $folder = new Filesystem();
+
+        // Find all files matching '*Controller.php' in the folder recursively
+        $controllerFiles = $folder->findRecursive($basePath, '.*Controller\.php');
+
+        foreach ($controllerFiles as $file) {
+            // Get the relative path to create the FQCN
+            $relativePath = str_replace($basePath, '', $file);
+            $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
+
+            // Combine the namespace with the relative path
+            $controllers[] = $namespace . $className;
+        }
+
+        return $controllers;
     }
 }
