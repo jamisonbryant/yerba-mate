@@ -125,15 +125,15 @@ class RouteProvider
         }
 
         $controllers = Configure::read('Routing.controllers', []);
-        if (empty($controllers)) {
+        if ($controllers === []) {
             $appControllers = $this->listControllers(
                 APP . 'Controller',
-                'App\\Controller\\'
+                Configure::read('App.namespace') . '\\Controller\\'
             );
 
             $pluginControllers = [];
             foreach (Plugin::loaded() as $pluginName) {
-                $pluginPath = Plugin::path($pluginName) . 'src/Controller';
+                $pluginPath = Plugin::classPath($pluginName) . 'Controller';
                 if (is_dir($pluginPath)) {
                     $pluginNamespace = $pluginName . '\\Controller\\';
                     $pluginControllers = array_merge(
