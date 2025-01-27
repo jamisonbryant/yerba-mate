@@ -11,6 +11,10 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Utility\Filesystem;
 use CakeAttributes\Routing\Route\ScopedRoute;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+use RecursiveRegexIterator;
 
 /**
  * Scans controllers and returns route configuration objects for adding to the route table.
@@ -116,9 +120,10 @@ class RouteProvider
      * Automatically registers identified routes based on reflected attributes
      *
      * @param \Cake\Routing\RouteBuilder $builder
+     * @param string $basePath Path to scan
      * @return void
      */
-    public function autoRegister(RouteBuilder $builder): void
+    public function autoRegister(RouteBuilder $builder, string $basePath = APP): void
     {
         if (Configure::read('Routing.autoRegister') === false) {
             return;
@@ -127,7 +132,7 @@ class RouteProvider
         $controllers = Configure::read('Routing.controllers', []);
         if ($controllers === []) {
             $appControllers = $this->listControllers(
-                APP . 'Controller',
+                $basePath . 'Controller',
                 Configure::read('App.namespace') . '\\Controller\\'
             );
 
