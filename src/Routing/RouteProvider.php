@@ -193,23 +193,33 @@ class RouteProvider
      *
      * @param string $basePath
      * @param string $namespace
-
      * @return array
      */
     protected function listControllers(string $basePath, string $namespace): array
     {
         $controllers = [];
-        $folder = new Filesystem();
+        // // Find all files matching '*Controller.php' in the folder recursively
+        // $folder = new Filesystem();
+        // $controllerFiles = $folder->findRecursive($basePath, '.*Controller\.php');
 
-        // Find all files matching '*Controller.php' in the folder recursively
-        $controllerFiles = $folder->findRecursive($basePath, '.*Controller\.php');
+        // foreach ($controllerFiles as $file) {
+        //     // Get the relative path to create the FQCN
+        //     //   then combine the namespace with the relative path
+        //     $relativePath = str_replace($basePath, '', $file);
+        //     $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
+        //     $controllers[] = $namespace . $className;
+        // }
 
-        foreach ($controllerFiles as $file) {
+        // TODO: Updated code that doesn't use the Filesystem class (internal)
+        $directory = new RecursiveDirectoryIterator($basePath);
+        $iterator = new RecursiveIteratorIterator($directory);
+        $regex = new RegexIterator($iterator, '/.*Controller\.php$/i', RecursiveRegexIterator::GET_MATCH);
+        
+        foreach ($regex as $file) {
             // Get the relative path to create the FQCN
-            $relativePath = str_replace($basePath, '', $file);
+            //   then combine the namespace with the relative path
+            $relativePath = str_replace($basePath, '', $file[0]);
             $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
-
-            // Combine the namespace with the relative path
             $controllers[] = $namespace . $className;
         }
 
