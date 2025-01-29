@@ -19,20 +19,28 @@ $findRoot = function ($root) {
 $root = $findRoot(__FILE__);
 unset($findRoot);
 chdir($root);
-require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
+require_once 'vendor/autoload.php';
+// require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
+
+define('ROOT', $root . DS . 'tests' . DS . 'test_app' . DS);
+define('CAKE', $root . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS);
+define('APP', ROOT . 'src' . DS);
+// define('CONFIG', APP);
+define('TMP', sys_get_temp_dir() . DS);
+define('CACHE', TMP . 'cache' . DS);
+
+Configure::write('debug', true);
 Configure::write('Routing.autoRegister', true);
-
-define('MYTMP', __DIR__ . DS . '..' . DS . 'tmp' . DS);
 
 Cache::setConfig([
     'default' => [
         'engine' => FileEngine::class,
-        'path' => MYTMP,
+        'path' => TMP,
     ],
     'cake_attributes' => [
         'engine' => FileEngine::class,
-        'path' => MYTMP,
+        'path' => TMP,
     ],
 ]);
 
