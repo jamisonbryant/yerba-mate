@@ -89,12 +89,8 @@ class RouteScannerTest extends TestCase
 
     public static function getControllers(): array
     {
-        $controllers = Configure::read('Routing.controllers');
-        $result = [];
-        foreach ($controllers as $controller) {
-            $result[] = [$controller];
-        }
-
-        return $result;
+        return [
+            [\TestApp\Controller\UsersController::class],
+        ];
     }
 }
