@@ -71,16 +71,16 @@ class RouteProviderTest extends TestCase
             ->toArray();
 
         $expected = [
-            'users:edit | //users/edit/:id | GET',
-            'users:edit | //users/edit/:id | GET',
-            'users:delete | //users/delete/:id | POST',
-            'users:delete | //users/delete/:id | POST',
-            'users:add | //users/add | POST',
-            'users:add | //users/add | POST',
-            'users:view | //users/:id | GET',
-            'users:view | //users/:id | GET',
-            'users:index | //users | GET',
-            'users:index | //users | GET',
+            'users:edit | /users/edit/:id | GET',
+            'users:edit | /users/edit/:id | GET',
+            'users:delete | /users/delete/:id | POST',
+            'users:delete | /users/delete/:id | POST',
+            'users:add | /users/add | POST',
+            'users:add | /users/add | POST',
+            'users:view | /users/:id | GET',
+            'users:view | /users/:id | GET',
+            'users:index | /users | GET',
+            'users:index | /users | GET',
         ];
 
         $this->assertEquals($expected, $routeDefinitions);
