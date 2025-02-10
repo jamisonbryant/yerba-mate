@@ -151,8 +151,6 @@ class RouteProvider
             $controllers = array_merge($appControllers, $pluginControllers);
         }
 
-        dd($controllers);
-
         $routes = collection($this->getRoutes($controllers));
         if ($routes->isEmpty()) {
             return;
@@ -203,29 +201,18 @@ class RouteProvider
     protected function listControllers(string $basePath, string $namespace): array
     {
         $controllers = [];
-        // // Find all files matching '*Controller.php' in the folder recursively
-        // $folder = new Filesystem();
-        // $controllerFiles = $folder->findRecursive($basePath, '.*Controller\.php');
-
-        // foreach ($controllerFiles as $file) {
-        //     // Get the relative path to create the FQCN
-        //     //   then combine the namespace with the relative path
-        //     $relativePath = str_replace($basePath, '', $file);
-        //     $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
-        //     $controllers[] = $namespace . $className;
-        // }
-
-        // TODO: Updated code that doesn't use the Filesystem class (internal)
         $directory = new RecursiveDirectoryIterator($basePath);
         $iterator = new RecursiveIteratorIterator($directory);
         $regex = new RegexIterator($iterator, '/.*Controller\.php$/i', RecursiveRegexIterator::GET_MATCH);
         
         foreach ($regex as $file) {
-            // Get the relative path to create the FQCN
-            //   then combine the namespace with the relative path
+            // Get the relative path to create the FQCN then combine the namespace with the relative path
             $relativePath = str_replace($basePath, '', $file[0]);
             $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
-            $controllers[] = $namespace . $className;
+
+            // Ensure no leading or trailing backslashes
+            $className = ltrim($className, '\\'); 
+            $controllers[] = rtrim($namespace, '\\') . '\\' . $className;
         }
 
         return $controllers;
