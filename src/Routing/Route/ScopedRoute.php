@@ -32,7 +32,7 @@ class ScopedRoute extends Route
      */
     public function getDefinition(): string
     {
-        return sprintf('%s | %s | %s', $this->getName(), $this->getUri(), implode(',', $this->defaults['_method']));
+        return sprintf('%s | %s | %s', $this->getName(), $this->getUri(), $this->getMethods());
     }
 
     /**
@@ -49,5 +49,13 @@ class ScopedRoute extends Route
     public function setScope(string $scope): void
     {
         $this->scope = $scope;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethods(): string
+    {
+        return implode(',', $this->defaults['_method']);
     }
 }
