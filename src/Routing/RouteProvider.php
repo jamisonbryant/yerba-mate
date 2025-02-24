@@ -208,6 +208,7 @@ class RouteProvider
         foreach ($regex as $file) {
             // Get the relative path to create the FQCN then combine the namespace with the relative path
             $relativePath = str_replace($basePath, '', $file[0]);
+            /** @var string $className */
             $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
 
             // Ensure no leading or trailing backslashes
