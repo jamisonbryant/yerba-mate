@@ -204,14 +204,14 @@ class RouteProvider
         $directory = new RecursiveDirectoryIterator($basePath);
         $iterator = new RecursiveIteratorIterator($directory);
         $regex = new RegexIterator($iterator, '/.*Controller\.php$/i', RecursiveRegexIterator::GET_MATCH);
-        
+
         foreach ($regex as $file) {
             // Get the relative path to create the FQCN then combine the namespace with the relative path
             $relativePath = str_replace($basePath, '', $file[0]);
             $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
 
             // Ensure no leading or trailing backslashes
-            $className = ltrim($className, '\\'); 
+            $className = ltrim($className, '\\');
             $controllers[] = rtrim($namespace, '\\') . '\\' . $className;
         }
 
