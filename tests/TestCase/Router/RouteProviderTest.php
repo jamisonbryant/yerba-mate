@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace CakeAttributes\Test\TestCase\Router;
 
 use Cake\Core\Configure;
+use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\Router;
-use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\TestSuite\TestCase;
 use CakeAttributes\Routing\Route\ScopedRoute;
 use CakeAttributes\Routing\RouteProvider;
@@ -88,7 +88,7 @@ class RouteProviderTest extends TestCase
 
     public function testAutoRegisterScansPluginControllersForRoutes(): void
     {
-
+        // TODO: Fill in this test
     }
 
     public function testAutoRegisterRegistersFallbackRoutesWhenAllowFallbacksIsTrue(): void
