@@ -9,12 +9,11 @@ use Cake\Core\Plugin;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use Cake\Utility\Filesystem;
 use CakeAttributes\Routing\Route\ScopedRoute;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RegexIterator;
 use RecursiveRegexIterator;
+use RegexIterator;
 
 /**
  * Scans controllers and returns route configuration objects for adding to the route table.

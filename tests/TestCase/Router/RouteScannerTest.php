@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace CakeAttributes\Test\TestCase\Router;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use CakeAttributes\Attributes\Prefix;
 use CakeAttributes\Attributes\Scope;
 use CakeAttributes\Routing\RouteScanner;
 use ReflectionClass;
+use TestApp\Controller\UsersController;
 
 /**
  * Route Scanner Test
@@ -90,7 +90,7 @@ class RouteScannerTest extends TestCase
     public static function getControllers(): array
     {
         return [
-            [\TestApp\Controller\UsersController::class],
+            [UsersController::class],
         ];
     }
 }
