@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 namespace CakeAttributes\Routing\Route;
-namespace CakeAttributes\Routing\Route;
 
 use Cake\Routing\Route\Route;
 
@@ -25,7 +24,7 @@ class ScopedRoute extends Route
      */
     public function getUri(): string
     {
-        return $this->scope . $this->route->template;
+        return rtrim($this->scope, '/') . '/' . ltrim($this->route->template, '/');
     }
 
     /**
@@ -33,7 +32,7 @@ class ScopedRoute extends Route
      */
     public function getDefinition(): string
     {
-        return sprintf('%s | %s | %s', $this->getName(), $this->getUri(), implode(',', $this->defaults['_method']));
+        return sprintf('%s | %s | %s', $this->getName(), $this->getUri(), $this->getMethods());
     }
 
     /**
@@ -50,5 +49,13 @@ class ScopedRoute extends Route
     public function setScope(string $scope): void
     {
         $this->scope = $scope;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethods(): string
+    {
+        return implode(',', $this->defaults['_method']);
     }
 }

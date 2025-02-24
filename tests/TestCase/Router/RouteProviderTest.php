@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace CakeAttributes\Test\TestCase\Router;
 
+use Cake\Console\ConsoleIo;
 use Cake\Core\Configure;
+use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Routing\Route\Route as CakeRoute;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use CakeAttributes\Routing\Route\ScopedRoute;
@@ -18,6 +21,8 @@ use TestApp\Controller\UsersController;
  */
 class RouteProviderTest extends TestCase
 {
+    use ContainerStubTrait;
+
     protected RouteProvider $provider;
     protected array $configuredRoutes;
 
@@ -26,6 +31,11 @@ class RouteProviderTest extends TestCase
         parent::setUp();
 
         $this->setAppNamespace();
+        $this->configApplication(
+            'TestApp\Application',
+            [PLUGIN_TESTS . 'test_app' . DS . 'config']
+        );
+
         $this->provider = new RouteProvider('route_provider_test');
         $this->provider->clearCache();
         $this->configuredRoutes = $this->getConfiguredRoutes();
@@ -56,26 +66,44 @@ class RouteProviderTest extends TestCase
         $this->assertEquals($firstRun, $secondRun);
     }
 
-    public function testAutoRegisterRegistersCriticalRoutes(): void
+    public function testAutoRegisterScansApplicationControllersForRoutes(): void
     {
         $routeDefinitions = collection($this->configuredRoutes)
             ->map(fn (ScopedRoute $route) => $route->getDefinition())
             ->toArray();
 
-        $expected = [
-            'users:edit | //users/edit/:id | GET',
-            'users:edit | //users/edit/:id | GET',
-            'users:delete | //users/delete/:id | POST',
-            'users:delete | //users/delete/:id | POST',
-            'users:add | //users/add | POST',
-            'users:add | //users/add | POST',
-            'users:view | //users/:id | GET',
-            'users:view | //users/:id | GET',
-            'users:index | //users | GET',
-            'users:index | //users | GET',
+        $expectedRoutes = [
+            'users:edit | /users/edit/:id | GET',
+            'users:delete | /users/delete/:id | POST',
+            'users:add | /users/add | POST',
+            'users:view | /users/:id | GET',
+            'users:index | /users | GET',
         ];
 
-        $this->assertEquals($expected, $routeDefinitions);
+        foreach ($expectedRoutes as $route) {
+            $this->assertTrue( in_array($route, $routeDefinitions, true));
+        }
+    }
+
+    public function testAutoRegisterScansPluginControllersForRoutes(): void
+    {
+        $this->printRoutes(Router::getRouteCollection());
+
+        $routeDefinitions = collection($this->configuredRoutes)
+            ->map(fn (ScopedRoute $route) => $route->getDefinition())
+            ->toArray();
+
+        $expectedRoutes = [
+            'cars:edit | /cars/edit/:id | GET',
+            'cars:delete | /cars/delete/:id | POST',
+            'cars:add | /cars/add | POST',
+            'cars:view | /cars/:id | GET',
+            'cars:index | /cars | GET',
+        ];
+
+        foreach ($expectedRoutes as $route) {
+            $this->assertTrue( in_array($route, $routeDefinitions, true));
+        }
     }
 
     public function testAutoRegisterRegistersFallbackRoutesWhenAllowFallbacksIsTrue(): void
@@ -110,10 +138,38 @@ class RouteProviderTest extends TestCase
     {
         // Reset the router to defaults to that previously-registered routes don't pollute the test
         Router::reload();
-        $this->loadPlugins(['CakeAttributes']);
+
+        $this->loadPlugins([
+            'CakeAttributes',
+            'TestAppPlugin' => ['path' => PLUGIN_TESTS . 'test_app/plugins/TestAppPlugin/'],
+        ]);
+
+        $this->printRoutes(Router::getRouteCollection());
+
         $builder = Router::createRouteBuilder('/');
         $this->provider->autoRegister($builder);
 
         return Router::getRouteCollection()->routes();
+    }
+
+    /**
+     * @param \Cake\Routing\RouteCollection|null $collection
+     * @return void
+     */
+    private function printRoutes(RouteCollection $collection = null): void
+    {
+        $io = new ConsoleIo();
+        $collection ??= Router::getRouteCollection();
+
+        $routeDefinitions = collection($collection->routes())
+            ->map(fn (ScopedRoute $route) => [
+                $route->getName(),
+                $route->getMethods(),
+                $route->getUri(),
+            ])
+            ->toArray();
+
+        array_unshift($routeDefinitions, ['Name', 'Method(s)', 'URI']);
+        $io->helper('table')->output($routeDefinitions);
     }
 }

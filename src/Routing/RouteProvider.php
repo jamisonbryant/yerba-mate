@@ -5,10 +5,15 @@ namespace CakeAttributes\Routing;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Routing\Route\Route as CakeRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use CakeAttributes\Routing\Route\ScopedRoute;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RecursiveRegexIterator;
+use RegexIterator;
 
 /**
  * Scans controllers and returns route configuration objects for adding to the route table.
@@ -114,17 +119,35 @@ class RouteProvider
      * Automatically registers identified routes based on reflected attributes
      *
      * @param \Cake\Routing\RouteBuilder $builder
+     * @param string $basePath Path to scan
      * @return void
      */
-    public function autoRegister(RouteBuilder $builder): void
+    public function autoRegister(RouteBuilder $builder, string $basePath = APP): void
     {
         if (Configure::read('Routing.autoRegister') === false) {
             return;
         }
 
-        $controllers = Configure::read('Routing.controllers');
-        if (!$controllers) {
-            return;
+        $controllers = Configure::read('Routing.controllers', []);
+        if ($controllers === []) {
+            $appControllers = $this->listControllers(
+                $basePath . 'Controller',
+                Configure::read('App.namespace') . '\\Controller\\'
+            );
+
+            $pluginControllers = [];
+            foreach (Plugin::loaded() as $pluginName) {
+                $pluginPath = Plugin::classPath($pluginName) . 'Controller';
+                if (is_dir($pluginPath)) {
+                    $pluginNamespace = $pluginName . '\\Controller\\';
+                    $pluginControllers = array_merge(
+                        $pluginControllers,
+                        $this->listControllers($pluginPath, $pluginNamespace)
+                    );
+                }
+            }
+
+            $controllers = array_merge($appControllers, $pluginControllers);
         }
 
         $routes = collection($this->getRoutes($controllers));
@@ -165,5 +188,33 @@ class RouteProvider
         /** @var array<\CakeAttributes\Routing\Route\ScopedRoute> $toBeCachedRoutes */
         $this->routes = $toBeCachedRoutes;
         Cache::write($this->cacheKey, $toBeCachedRoutes, $this->cacheConfig);
+    }
+
+    /**
+     * Scans a given base path for controllers and returns a list of fully-qualified class names
+     *
+     * @param string $basePath
+     * @param string $namespace
+     * @return array
+     */
+    protected function listControllers(string $basePath, string $namespace): array
+    {
+        $controllers = [];
+        $directory = new RecursiveDirectoryIterator($basePath);
+        $iterator = new RecursiveIteratorIterator($directory);
+        $regex = new RegexIterator($iterator, '/.*Controller\.php$/i', RecursiveRegexIterator::GET_MATCH);
+
+        foreach ($regex as $file) {
+            // Get the relative path to create the FQCN then combine the namespace with the relative path
+            $relativePath = str_replace($basePath, '', $file[0]);
+            /** @var string $className */
+            $className = str_replace(['/', '.php'], ['\\', ''], $relativePath);
+
+            // Ensure no leading or trailing backslashes
+            $className = ltrim($className, '\\');
+            $controllers[] = rtrim($namespace, '\\') . '\\' . $className;
+        }
+
+        return $controllers;
     }
 }
