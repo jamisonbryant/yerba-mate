@@ -12,8 +12,6 @@ class Application extends BaseApplication
 {
     public function bootstrap(): void
     {
-        $this->addPlugin('CakeAttributes');
-        $this->addPlugin('TestAppPlugin');
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
